@@ -1,4 +1,5 @@
-# A Study on the Effectiveness of Corn Futures as a Safe-Haven Asset During the Russia-Ukraine Conflict - Based on DCC-GARCH and Wavelet Analysis
+# A Study on the Effectiveness of Corn Futures as a Safe-Haven Asset During the Russia-Ukraine Conflict
+## Based on DCC-GARCH and Wavelet Analysis
 This repository hosts the final paper for the junior-year Applied Economics course, which replicates the time series study *Wheat as a hedge and safe haven for equity investors during the Russia–Ukraine war*.
 
 ## Study Overview
