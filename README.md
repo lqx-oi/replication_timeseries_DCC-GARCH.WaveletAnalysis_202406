@@ -18,8 +18,10 @@ The empirical results indicate that corn futures exhibited heterogeneous safe-ha
 | Data Time Span              | 2020-01-01 to 2022-08-12<br>Pre-war: 2020-01-01 to 2022-02-23<br>War period: 2022-02-24 to 2022-08-12 | 2020-03-16 to 2022-12-30<br>Pre-war: 2020-03-16 to 2022-02-23<br>War period: 2022-02-24 to 2022-12-30 |
 | Data Processing Details     | Daily return formula: $\ln [P_{i}(t)-P_{i}(t-1)]$<br>No exchange rate conversion | Daily return formula: $\frac{P_{i t}-P_{i(t-1)}}{P_{i(t-1)}}$<br>Collected daily USD/CNY and JPY/CNY exchange rates to unify corn futures units to CNY/ton |
 
-- **Main Research Methods:** Time series data processing;Dynamic Conditional Correlation Generalized Autoregressive Conditional Heteroskedasticity (DCC-GARCH) model;Wavelet analysis.
+- **Main Research Methods:** Time series data processing; Dynamic Conditional Correlation Generalized Autoregressive Conditional Heteroskedasticity (DCC-GARCH) model; Wavelet analysis.
 
-- **Project Documentation:** Data employed;relevant regression results;code for graph generation;initial draft of the paper;presentation slides.
+- **Project Documentation:** Data employed; relevant regression results; code for graph generation; initial draft of the paper; presentation slides.
 
 - **Reference:** *Ghorbali, B., Kaabia, O., Naoui, K., Urom, C., & Ben Slimane, I. (2023). Wheat as a hedge and safe haven for equity investors during the Russia–Ukraine war. Finance Research Letters, 58, 104534.*
+
+- **Programming languages:** Stata; R; MATLAB
