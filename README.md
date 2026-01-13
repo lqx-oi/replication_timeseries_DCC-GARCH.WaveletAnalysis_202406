@@ -8,7 +8,8 @@ By applying the Dynamic Conditional Correlation Generalized Autoregressive Condi
 
 The empirical results indicate that corn futures exhibited heterogeneous safe-haven characteristics across different markets during the Russia–Ukraine war and demonstrated sound overall performance, providing crucial insights for investors in their asset allocation decisions amid global uncertainty.
 
-## Key Modifications from the Original Paper
+**Key Modifications from the Original Paper**
+
 | **Modification Dimension** | **Original Paper (Wheat Study)** | **This Replication (Corn Futures Study)** |
 |-----------------------------|----------------------------------|-------------------------------------------|
 | Research Core Asset         | Wheat                            | Corn futures                               |
