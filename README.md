@@ -20,6 +20,6 @@ The empirical results indicate that corn futures exhibited heterogeneous safe-ha
 
 - **Main Research Methods:** Time series data processing;Dynamic Conditional Correlation Generalized Autoregressive Conditional Heteroskedasticity (DCC-GARCH) model;Wavelet analysis.
 
-- **Project Documentation:** Data employed;relevant regression results;code for graph generation;initial draft of the paper;presentation slides (PPT).
+- **Project Documentation:** Data employed;relevant regression results;code for graph generation;initial draft of the paper;presentation slides.
 
 - **Reference:** *Ghorbali, B., Kaabia, O., Naoui, K., Urom, C., & Ben Slimane, I. (2023). Wheat as a hedge and safe haven for equity investors during the Russia–Ukraine war. Finance Research Letters, 58, 104534.*
