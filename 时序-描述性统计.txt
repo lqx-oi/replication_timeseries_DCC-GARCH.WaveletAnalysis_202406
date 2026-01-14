@@ -1,0 +1,39 @@
+
+clear
+import excel using "C:/Users/lqx/Desktop/时间序列论文/数据/统一数据（完整日期）.xls", sheet(Sheet1) firstrow
+tsset date
+summarize return_corn_china return_corn_us return_corn_japan return_stock_china return_stock_us return_stock_japan, detail
+*检测正态性
+jb return_corn_china
+jb return_corn_us
+jb return_corn_japan
+jb return_stock_china
+jb return_stock_us
+jb return_stock_japan
+*检测平稳性
+dfuller return_corn_china
+dfuller return_corn_us
+dfuller return_corn_japan
+dfuller return_stock_china
+dfuller return_stock_us
+dfuller return_stock_japan
+*检测自相关性
+wntestq return_corn_china, lags(20)
+wntestq return_corn_us, lags(20)
+wntestq return_corn_japan, lags(20)
+wntestq return_stock_china, lags(20)
+wntestq return_stock_us, lags(20)
+wntestq return_stock_japan, lags(20)
+*检测时间序列的平方项是否存在自相关性，间接检测条件异方差性（是否存在波动聚集现象）
+gen return_corn_china_sq = return_corn_china^2
+wntestq return_corn_china_sq, lags(20)
+gen return_corn_us_sq = return_corn_us^2
+wntestq return_corn_us_sq, lags(20)
+gen return_corn_japan_sq = return_corn_japan^2
+wntestq return_corn_japan_sq, lags(20)
+gen return_stock_china_sq = return_stock_china^2
+wntestq return_stock_china_sq, lags(20)
+gen return_stock_us_sq = return_stock_us^2
+wntestq return_stock_us_sq, lags(20)
+gen return_stock_japan_sq = return_stock_japan^2
+wntestq return_stock_japan_sq, lags(20)
