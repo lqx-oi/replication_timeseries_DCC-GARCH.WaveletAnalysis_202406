@@ -1,0 +1,8 @@
+*进一步进行回归，验证玉米期货在战争期间的避险能力
+*所用数据集：统一数据（完整日期）.xlsx
+
+gen DRUW = 0 if date <= date("23feb2022", "DMY")
+replace DRUW = 1 if date > date("23feb2022", "DMY")
+reg a_sc_cc L.a_sc_cc DRUW
+reg b_su_cu L.b_su_cu DRUW
+reg c_sj_cj L.c_sj_cj DRUW

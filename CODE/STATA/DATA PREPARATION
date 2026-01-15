@@ -1,0 +1,136 @@
+*数据准备和变量标准化
+*所用数据集：统一数据（完整日期）.xlsx
+*处理好的数据存储为结果数据.xlsx
+
+*标准化
+egen mean_return_corn_china = mean(return_corn_china)
+egen sd_return_corn_china = sd(return_corn_china)
+gen cc = (return_corn_china - mean_return_corn_china) / sd_return_corn_china
+
+egen mean_return_stock_china = mean(return_stock_china)
+egen sd_return_stock_china = sd(return_stock_china)
+gen sc = (return_stock_china - mean_return_stock_china) / sd_return_stock_china
+
+egen mean_return_corn_us = mean(return_corn_us)
+egen sd_return_corn_us = sd(return_corn_us)
+gen cu = (return_corn_us - mean_return_corn_us) / sd_return_corn_us
+
+egen mean_return_stock_us = mean(return_stock_us)
+egen sd_return_stock_us = sd(return_stock_us)
+gen su = (return_stock_us - mean_return_stock_us) / sd_return_stock_us
+
+egen mean_return_corn_japan = mean(return_corn_japan)
+egen sd_return_corn_japan = sd(return_corn_japan)
+gen cj = (return_corn_japan - mean_return_corn_japan) / sd_return_corn_japan
+
+egen mean_return_stock_japan = mean(return_stock_japan)
+egen sd_return_stock_japan = sd(return_stock_japan)
+gen sj = (return_stock_japan - mean_return_stock_japan) / sd_return_stock_japan
+
+*使用GARCH模型估计变量条件方差
+arch cc, arch(1) garch(2)
+predict return_corn_c_std_v, var
+list return_corn_c_std_v
+
+arch cu, arch(1) garch(1)
+predict return_corn_u_std_v, var
+list return_corn_u_std_v
+
+arch cj, arch(1) garch(1)
+predict return_corn_j_std_v, var
+list return_corn_j_std_v
+
+arch sc, arch(1) garch(1)
+predict return_stock_c_std_v, var
+list return_stock_c_std_v
+
+arch su, arch(1) garch(1)
+predict return_stock_u_std_v, var
+list return_stock_u_std_v
+
+arch sj, arch(1) garch(2)
+predict return_stock_j_std_v, var
+list return_stock_j_std_v
+
+* 使用DCC-GARCH模型估计变量条件协方差
+* china
+* 拟合单变量GARCH模型，获取初始值
+arch cc, arch(1) garch(2)
+matrix init_corn = e(b)
+arch sc, arch(1) garch(1)
+matrix init_stock = e(b)
+* 设置DCC模型的初始值
+scalar init_dcc_alpha = 0.02
+scalar init_dcc_beta = 0.85
+scalar init_dcc_omega = 0.01
+* 获取初始值的行向量
+matrix init_corn_vec = vec(init_corn)'
+matrix init_stock_vec = vec(init_stock)'
+* 将DCC模型的初始值转换为矩阵
+matrix init_dcc = (init_dcc_alpha, init_dcc_beta, init_dcc_omega)
+* 合并为一个行向量，并添加DCC模型的初始值
+matrix init_values = init_corn_vec, init_stock_vec, init_dcc
+* 检查初始值矩阵
+matrix list init_values
+* 为DCC-GARCH模型指定初始值
+mgarch dcc (cc=)(sc=), arch(1) garch(2) ///
+    from(init_values) technique(bfgs)
+predict a*, correlation
+list a*
+* 计算动态条件协方差
+gen covar_c = a_sc_cc * sqrt(return_corn_c_std_v) * sqrt(return_stock_c_std_v)
+list covar_c
+
+*us
+* 拟合单变量GARCH模型，获取初始值
+arch cu, arch(1) garch(1)
+matrix init_corn = e(b)
+arch su, arch(1) garch(1)
+matrix init_stock = e(b)
+* 设置DCC模型的初始值
+scalar init_dcc_alpha = 0.01
+scalar init_dcc_beta = 0.05
+scalar init_dcc_omega = 0.05
+* 获取初始值的行向量
+matrix init_corn_vec = vec(init_corn)'
+matrix init_stock_vec = vec(init_stock)'
+* 将DCC模型的初始值转换为矩阵
+matrix init_dcc = (init_dcc_alpha, init_dcc_beta, init_dcc_omega)
+* 合并为一个行向量，并添加DCC模型的初始值
+matrix init_values = init_corn_vec, init_stock_vec, init_dcc
+* 检查初始值矩阵
+matrix list init_values
+* 为DCC-GARCH模型指定初始值
+mgarch dcc (cu=)(su=), arch(1) garch(1) ///
+    from(init_values) technique(nr)
+predict b*, correlation
+*计算动态条件协方差
+gen covar_u = b_su_cu * sqrt(return_corn_u_std_v) * sqrt(return_stock_u_std_v)
+list covar_u
+
+*japan
+* 拟合单变量GARCH模型，获取初始值
+arch cj, arch(1) garch(1)
+matrix init_corn = e(b)
+arch sj, arch(1) garch(2)
+matrix init_stock = e(b)
+* 设置DCC模型的初始值
+scalar init_dcc_alpha = 0.01
+scalar init_dcc_beta = 0.05
+scalar init_dcc_omega = 0.05
+* 获取初始值的行向量
+matrix init_corn_vec = vec(init_corn)'
+matrix init_stock_vec = vec(init_stock)'
+* 将DCC模型的初始值转换为矩阵
+matrix init_dcc = (init_dcc_alpha, init_dcc_beta, init_dcc_omega)
+* 合并为一个行向量，并添加DCC模型的初始值
+matrix init_values = init_corn_vec, init_stock_vec, init_dcc
+* 检查初始值矩阵
+matrix list init_values
+* 为DCC-GARCH模型指定初始值
+mgarch dcc (cj=)(sj=), arch(1) garch(1) ///
+    from(init_values) technique(bfgs)
+predict c*, correlation
+*计算动态条件协方差
+gen covar_j = c_sj_cj * sqrt(return_corn_j_std_v) * sqrt(return_stock_j_std_v)
+list covar_j

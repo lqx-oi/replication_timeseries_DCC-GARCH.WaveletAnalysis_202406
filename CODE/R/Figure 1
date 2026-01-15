@@ -1,0 +1,45 @@
+# 加载必要的包
+library(patchwork)
+library(readxl)
+library(ggplot2)
+library(lubridate)  # 用于处理日期
+
+# 读取数据
+df <- read_excel("C:/Users/lqx/Desktop/时间序列论文/数据/关键指标.xls")
+
+# 确保 date 列是 Date 类型
+df$date <- as.Date(df$date)
+
+# 创建一个通用的绘图函数
+create_plot <- function(df, y_var, y_label, y_limits) {
+  ggplot(df, aes(x = date, y = !!sym(y_var))) +
+    geom_line(color = "red") +
+    labs(x = "Date", y = y_label) +
+    scale_y_continuous(limits = y_limits, expand = expansion(mult = c(0, 0))) +
+    scale_x_date(expand = expansion(mult = c(0, 0))) +
+    theme_minimal() +
+    theme(panel.grid.minor = element_blank(),
+          axis.line = element_line(color = "black"),
+          plot.background = element_rect(fill = "transparent", color = NA),
+          panel.background = element_rect(fill = "transparent", color = NA)) +
+    geom_hline(yintercept = 0, color = "black")
+}
+
+# 设置y轴的范围
+y_limits_corn <- c(-0.05, 0.05)
+y_limits_stock <- c(-0.05, 0.05)
+
+# 创建各个图
+plot1 <- create_plot(df, "return_corn_china", "return_corn_china", y_limits_corn)
+plot2 <- create_plot(df, "return_corn_us", "return_corn_us", y_limits_corn)
+plot3 <- create_plot(df, "return_corn_japan", "return_corn_japan", y_limits_corn)
+plot4 <- create_plot(df, "return_stock_china", "return_stock_china", y_limits_stock)
+plot5 <- create_plot(df, "return_stock_us", "return_stock_us", y_limits_stock)
+plot6 <- create_plot(df, "return_stock_japan", "return_stock_japan", y_limits_stock)
+
+# 组合图形为2x3布局
+p <- plot1 + plot2 + plot3 + plot4 + plot5 + plot6 +
+  plot_layout(ncol = 3)
+
+# 显示图形
+print(p)
