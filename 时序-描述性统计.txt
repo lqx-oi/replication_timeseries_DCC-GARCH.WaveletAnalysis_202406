@@ -1,5 +1,5 @@
 clear
-import excel using "C:/Users/lqx/Desktop/时间序列论文/数据/统一数据（完整日期）.xls", sheet(Sheet1) firstrow
+import excel using "C:/统一数据（完整日期）.xls", sheet(Sheet1) firstrow
 tsset date
 summarize return_corn_china return_corn_us return_corn_japan return_stock_china return_stock_us return_stock_japan, detail
 *检测正态性
