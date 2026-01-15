@@ -1,4 +1,5 @@
 
+*描述性统计
 clear
 import excel using "C:/Users/lqx/Desktop/时间序列论文/数据/统一数据（完整日期）.xls", sheet(Sheet1) firstrow
 tsset date
