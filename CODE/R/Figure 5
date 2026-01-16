@@ -1,0 +1,44 @@
+library(patchwork)
+library(readxl)
+library(ggplot2)
+library(lubridate)  # 用于处理日期
+
+# 读取数据
+df <- read_excel("C:/关键指标.xls")
+
+# 转换日期列（假设你的数据有日期列）
+df$date <- ymd(df$date)
+
+# 绘制时间序列图
+p1 <- ggplot(df, aes(x = date, y = β_c)) +
+  geom_line(color = "blue", size = 1) +
+  labs(title = "Optimal hedge ratio of China", x = "Date") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 14),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        axis.text = element_text(size = 10))
+
+p2 <- ggplot(df, aes(x = date, y = β_u)) +
+  geom_line(color = "blue", size = 1) +
+  labs(title = "Optimal hedge ratio of US", x = "Date") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 14),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        axis.text = element_text(size = 10))
+
+p3 <- ggplot(df, aes(x = date, y = β_j)) +
+  geom_line(color = "blue", size = 1) +
+  labs(title = "Optimal hedge ratio of Japan", x = "Date") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 14),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        axis.text = element_text(size = 10))
+
+# 使用 patchwork 合并图表
+combined_plot <- p1 / p2 / p3
+
+# 显示图表
+print(combined_plot)
