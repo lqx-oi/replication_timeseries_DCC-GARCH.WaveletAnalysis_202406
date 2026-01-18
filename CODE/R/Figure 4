@@ -1,0 +1,47 @@
+# 加载所需的包
+library(patchwork)
+library(readxl)
+library(ggplot2)
+library(lubridate)  # 用于处理日期
+
+# 读取数据
+df <- read_excel("C:/Users/lqx/Desktop/时间序列论文/数据/关键指标.xls")
+
+# 转换日期列（假设你的数据有日期列）
+df$date <- ymd(df$date)
+
+# 绘制第一个时间序列图（中国最优权重）
+p1 <- ggplot(df, aes(x = date, y = w_c)) +
+  geom_line(color = "purple", size = 1) +
+  labs(title = "Optimal Weight of China", x = "Date") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 14),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        axis.text = element_text(size = 10))
+
+# 绘制第二个时间序列图（美国最优权重）
+p2 <- ggplot(df, aes(x = date, y = w_u)) +
+  geom_line(color = "purple", size = 1) +
+  labs(title = "Optimal Weight of US", x = "Date") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 14),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        axis.text = element_text(size = 10))
+
+# 绘制第三个时间序列图（日本最优权重）
+p3 <- ggplot(df, aes(x = date, y = w_j)) +
+  geom_line(color = "purple", size = 1) +
+  labs(title = "Optimal Weight of Japan", x = "Date") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 14),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        axis.text = element_text(size = 10))
+
+# 使用 patchwork 合并图表（垂直排列）
+combined_plot <- p1 / p2 / p3
+
+# 显示合并后的图表
+print(combined_plot)

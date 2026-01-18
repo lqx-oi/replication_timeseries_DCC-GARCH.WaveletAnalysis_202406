@@ -1,5 +1,5 @@
 % 加载数据
-data = readtable('C:/Users/lqx/Desktop/时间序列论文/数据/战前数据.xls', 'Sheet', 'Sheet1');
+data = readtable('C:/战前数据.xls', 'Sheet', 'Sheet1');
 
 % 提取需要的变量
 variables = ["return_corn_china", "return_corn_us", "return_corn_japan", "return_stock_china", "return_stock_us", "return_stock_japan"];
@@ -100,7 +100,7 @@ for i = 1:size(corrMatrix, 1)
 end
 
 % 添加标题（字体调整）
-title('Correlation Matrix', 'FontName', 'Arial', 'FontSize', 12, 'FontWeight', 'normal');
+title('Pre-War Correlation Matrix', 'FontName', 'Arial', 'FontSize', 12, 'FontWeight', 'normal');
 
 % 辅助函数：十六进制颜色转RGB
 function rgb = hex2rgb(hex)

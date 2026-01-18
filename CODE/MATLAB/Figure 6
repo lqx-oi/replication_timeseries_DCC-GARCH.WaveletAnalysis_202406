@@ -1,0 +1,42 @@
+data = readtable('C:/Users/lqx/Desktop/时间序列论文/数据/统一数据（完整日期）.xls', 'Sheet', 'Sheet1');
+
+% 提取时间序列数据
+date = data.date;
+corn_china = data.corn_china;
+stock_china = data.stock_china;
+corn_japan = data.corn_japan;
+stock_japan = data.stock_japan;
+corn_us = data.corn_us;
+stock_us = data.stock_us;
+
+% 定义时间序列
+data = {corn_china, stock_china, corn_us, stock_us, corn_japan, stock_japan};
+titles = {'Corn China', 'Stock China', 'Corn US', 'Stock US', 'Corn Japan', 'Stock Japan'};
+
+% 创建一个新的图形窗口
+figure;
+
+% 定义颜色映射
+cmap = jet;
+
+% 循环计算和绘制每个时间序列的CWT
+for i = 1:length(data)
+subplot(3, 2, i); % 创建3x2的子图布局
+[wt, f] = cwt(data{i}, 'amor'); % 计算连续小波变换
+% 转换日期格式为数字
+date_num = datenum(date);
+% 绘制CWT
+imagesc(date_num, f, abs(wt)); % 使用日期数据作为x轴
+% 设置日期格式
+datetick('x', 'yyyy-mm-dd', 'keeplimits'); % 设置x轴日期格式
+% 设置自定义的X轴刻度
+xticks = linspace(date_num(1), date_num(end), 10); % 6个刻度
+set(gca, 'XTick', xticks);
+set(gca, 'XTickLabel', datestr(xticks, 'yyyy-mm-dd'));
+axis xy; % 使y轴朝上
+title(titles{i}); % 设置标题
+ylabel('Period'); % 设置y轴标签
+xlabel('Date'); % 设置x轴标签
+colormap(cmap); % 设置颜色映射
+colorbar; % 显示颜色条
+end

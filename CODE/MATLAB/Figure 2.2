@@ -1,0 +1,198 @@
+%% ===================== 第一步：公共准备（配色表+变量名） =====================
+variableNames = ["return_corn_china", "return_corn_us", "return_corn_japan", ...
+                 "return_stock_china", "return_stock_us", "return_stock_japan"];
+
+% --------------- 配色表：深红(1) → 白(0) → 深蓝(-1) ---------------
+base_colors = [
+    hex2rgb('#6a0624'); 
+    hex2rgb('#8b0824'); 
+    hex2rgb('#b71c2c'); 
+    hex2rgb('#feab88'); 
+    hex2rgb('#fbd2bc'); 
+    hex2rgb('#ffffff'); 
+    hex2rgb('#c7e0ed'); 
+    hex2rgb('#6fafd2'); 
+    hex2rgb('#327db7'); 
+    hex2rgb('#134b87'); 
+    hex2rgb('#053061'); 
+];
+
+% 构建平滑渐变的配色矩阵
+num_gradients = 100;
+cmap = zeros(num_gradients, 3);
+base_num = size(base_colors, 1);
+step_per_segment = num_gradients / (base_num - 1);
+
+for i = 1:base_num - 1
+    start_color = base_colors(i, :);
+    end_color = base_colors(i + 1, :);
+    start_idx = round((i - 1) * step_per_segment) + 1;
+    end_idx = round(i * step_per_segment);
+    end_idx = min(end_idx, num_gradients);
+    num_steps = end_idx - start_idx + 1;
+    
+    for j = 1:num_steps
+        ratio = (j - 1) / (num_steps - 1);
+        cmap(start_idx + j - 1, :) = start_color * (1 - ratio) + end_color * ratio;
+    end
+end
+cmap = flipud(cmap); 
+
+%% ===================== 第二步：加载并处理两份数据 =====================
+% ------------- 战前数据 -------------
+data_pre = readtable('C:/战前数据.xls', 'Sheet', 'Sheet1');
+dataMatrix_pre = table2array(data_pre(:, variableNames));
+corrMatrix_pre = corr(dataMatrix_pre); 
+
+% ------------- 战后数据 -------------
+data_post = readtable('C:/战后数据.xls', 'Sheet', 'Sheet1');
+dataMatrix_post = table2array(data_post(:, variableNames));
+corrMatrix_post = corr(dataMatrix_post); 
+
+%% ===================== 第三步：创建并排热图（简化定位参数，保留视觉效果） =====================
+% 画布尺寸：简化OuterPosition（保留整数，符合手动设置习惯）
+fig = figure('Color', 'white', 'OuterPosition', [221 178 1215 504]);
+
+% ------------- 左图：战前热图 -------------
+% 子图位置：简化为4位小数（手动作图常用精度）
+subplot('Position', [0.1443 0.2567 0.2488 0.6683]);
+ax1 = gca; 
+ax1.Color = 'white';
+
+% 绘制热图（颜色范围保持[-1 1]）
+imagesc(ax1, corrMatrix_pre, [-1, 1]);
+colormap(ax1, cmap);
+caxis(ax1, [-1, 1]);
+ax1.CLim = [-1, 1];
+
+% 设置变量名称和字体
+ax1.XTick = 1:length(variableNames);
+ax1.XTickLabel = variableNames;
+ax1.XTickLabelRotation = 45;  % 合理的倾斜角度
+ax1.XAxisLocation = 'bottom'; 
+ax1.TickLength = [0 0];
+ax1.YTick = 1:length(variableNames);
+ax1.YTickLabel = variableNames;
+ax1.YTickLabelRotation = 0;    % Y轴标签水平
+ax1.FontName = 'Arial';
+ax1.FontSize = 12;  
+ax1.FontWeight = 'normal';
+ax1.FontAngle = 'normal';     
+ax1.LineWidth = 0.5;
+ax1.Box = 'on';
+
+% 绘制内部网格线
+hold(ax1, 'on');
+for i = 1:size(corrMatrix_pre, 1)+1
+    line([i-0.5, i-0.5], [0.5, size(corrMatrix_pre, 1)+0.5], ...
+         'Color', [0, 0, 0], 'LineWidth', 0.2, 'Parent', ax1);
+end
+for j = 1:size(corrMatrix_pre, 2)+1
+    line([0.5, size(corrMatrix_pre, 2)+0.5], [j-0.5, j-0.5], ...
+         'Color', [0, 0, 0], 'LineWidth', 0.2, 'Parent', ax1);
+end
+hold(ax1, 'off');
+
+% 显示数值
+for i = 1:size(corrMatrix_pre, 1)
+    for j = 1:size(corrMatrix_pre, 2)
+        txt = num2str(corrMatrix_pre(i, j), '%.2f');  
+        if corrMatrix_pre(i, j) >= 0.5 || corrMatrix_pre(i, j) <= -0.5
+            txtColor = 'white';
+        else
+            txtColor = 'black';
+        end
+        text(j, i, txt, 'HorizontalAlignment', 'center', 'VerticalAlignment','middle', ...
+             'Color', txtColor, 'FontName', 'Arial', 'FontSize', 12, 'FontWeight', 'normal', ...
+             'FontAngle', 'normal', 'Parent', ax1);
+    end
+end
+
+% 战前图标题
+title(ax1, 'Pre-War Correlation Matrix', 'FontName', 'Arial', 'FontSize', 12, ...
+      'FontWeight', 'bold', 'FontAngle', 'normal');
+
+% 左图颜色条（简化位置参数）
+cb1 = colorbar(ax1, 'Position', [0.40 0.2567 0.02 0.6683]); 
+cb1.Ticks = [-1, -0.5, 0, 0.5, 1];
+cb1.TickLabels = num2cell(cb1.Ticks);
+cb1.FontName = 'Arial';
+cb1.FontSize = 12;  
+cb1.FontAngle = 'normal';
+
+% ------------- 右图：战后热图 -------------
+% 子图位置：简化为4位小数
+subplot('Position', [0.5847 0.2567 0.2488 0.6683]);
+ax2 = gca; 
+ax2.Color = 'white';
+
+% 绘制热图
+imagesc(ax2, corrMatrix_post, [-1, 1]);
+colormap(ax2, cmap);
+caxis(ax2, [-1, 1]);
+ax2.CLim = [-1, 1];
+
+% 设置变量名称和字体
+ax2.XTick = 1:length(variableNames);
+ax2.XTickLabel = variableNames;
+ax2.XTickLabelRotation = 45;  
+ax2.XAxisLocation = 'bottom'; 
+ax2.TickLength = [0 0];
+ax2.YTick = 1:length(variableNames);
+ax2.YTickLabel = variableNames;
+ax2.YTickLabelRotation = 0;    
+ax2.FontName = 'Arial';
+ax2.FontSize = 12;  
+ax2.FontWeight = 'normal';
+ax2.FontAngle = 'normal';     
+ax2.LineWidth = 0.5;
+ax2.Box = 'on';
+
+% 绘制内部网格线
+hold(ax2, 'on');
+for i = 1:size(corrMatrix_post, 1)+1
+    line([i-0.5, i-0.5], [0.5, size(corrMatrix_post, 1)+0.5], ...
+         'Color', [0, 0, 0], 'LineWidth', 0.2, 'Parent', ax2);
+end
+for j = 1:size(corrMatrix_post, 2)+1
+    line([0.5, size(corrMatrix_post, 2)+0.5], [j-0.5, j-0.5], ...
+         'Color', [0, 0, 0], 'LineWidth', 0.2, 'Parent', ax2);
+end
+hold(ax2, 'off');
+
+% 显示数值
+for i = 1:size(corrMatrix_post, 1)
+    for j = 1:size(corrMatrix_post, 2)
+        txt = num2str(corrMatrix_post(i, j), '%.2f');  
+        if corrMatrix_post(i, j) >= 0.5 || corrMatrix_post(i, j) <= -0.5
+            txtColor = 'white';
+        else
+            txtColor = 'black';
+        end
+        text(j, i, txt, 'HorizontalAlignment', 'center', 'VerticalAlignment','middle', ...
+             'Color', txtColor, 'FontName', 'Arial', 'FontSize', 12, 'FontWeight', 'normal', ...
+             'FontAngle', 'normal', 'Parent', ax2);
+    end
+end
+
+% 战后图标题
+title(ax2, 'Post-War Correlation Matrix', 'FontName', 'Arial', 'FontSize', 12, ...
+      'FontWeight', 'bold', 'FontAngle', 'normal');
+
+% 右图颜色条（简化位置参数）
+cb2 = colorbar(ax2, 'Position', [0.84 0.2567 0.02 0.6683]); 
+cb2.Ticks = [-1, -0.5, 0, 0.5, 1];
+cb2.TickLabels = num2cell(cb2.Ticks);
+cb2.FontName = 'Arial';
+cb2.FontSize = 12;
+cb2.FontAngle = 'normal';
+
+%% ===================== 辅助函数：十六进制颜色转RGB =====================
+function rgb = hex2rgb(hex)
+    hex = hex(2:end); 
+    rgb = [
+        hex2dec(hex(1:2))/255, ...
+        hex2dec(hex(3:4))/255, ...
+        hex2dec(hex(5:6))/255
+    ];
+end

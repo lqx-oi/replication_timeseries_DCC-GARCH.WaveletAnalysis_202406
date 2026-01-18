@@ -1,0 +1,43 @@
+% 加载数据
+data = readtable('C:/Users/lqx/Desktop/时间序列论文/数据/统一数据（完整日期）.xls', 'Sheet', 'Sheet1');
+
+% 提取时间序列数据
+corn_china = data.corn_china;
+stock_china = data.stock_china;
+corn_japan = data.corn_japan;
+stock_japan = data.stock_japan;
+corn_us = data.corn_us;
+stock_us = data.stock_us;
+
+% 创建日期向量
+startDate = datetime(2020, 3, 16);
+endDate = datetime(2022, 12, 30);
+dates = startDate:caldays(1):endDate;
+
+% 确保时间序列数据长度与日期向量一致
+assert(length(corn_japan) == length(dates), '数据长度与日期向量长度不一致');
+assert(length(stock_japan) == length(dates), '数据长度与日期向量长度不一致');
+assert(length(corn_china) == length(dates), '数据长度与日期向量长度不一致');
+assert(length(stock_china) == length(dates), '数据长度与日期向量长度不一致');
+assert(length(corn_us) == length(dates), '数据长度与日期向量长度不一致');
+assert(length(stock_us) == length(dates), '数据长度与日期向量长度不一致');
+
+% 绘制中日美三个市场的小波相干性图
+figure;
+
+% 设置2×2布局
+subplot(2,2,1)
+wcoherence(corn_china, stock_china, days);
+title('China: Corn vs Stock')
+
+subplot(2,2,2)
+wcoherence(corn_japan, stock_japan, days);
+title('Japan: Corn vs Stock')
+
+subplot(2,2,3)
+wcoherence(corn_us, stock_us, days);
+title('US: Corn vs Stock')
+
+% 第四个子图为空
+subplot(2,2,4)
+axis off
