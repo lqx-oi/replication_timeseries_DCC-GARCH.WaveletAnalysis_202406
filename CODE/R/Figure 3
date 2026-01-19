@@ -1,10 +1,10 @@
-# 加载必要的包
+# 加载包
 library(ggplot2)
 library(tidyr)
 library(readxl)
 
 # 读取数据
-df <- read_excel("C:/Users/lqx/Desktop/时间序列论文/数据/关键指标.xls")
+df <- read_excel("C:/关键指标.xls")
 
 # 将数据转换为长格式
 df_long <- df %>%

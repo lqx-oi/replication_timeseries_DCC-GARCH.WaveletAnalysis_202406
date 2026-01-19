@@ -1,8 +1,8 @@
-# 加载必要的包
+# 加载包
 library(patchwork)
 library(readxl)
 library(ggplot2)
-library(lubridate)  # 用于处理日期
+library(lubridate)
 
 # 读取数据
 df <- read_excel("C:/关键指标.xls")

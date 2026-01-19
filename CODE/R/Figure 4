@@ -1,13 +1,13 @@
-# 加载所需的包
+# 加载包
 library(patchwork)
 library(readxl)
 library(ggplot2)
 library(lubridate)  # 用于处理日期
 
 # 读取数据
-df <- read_excel("C:/Users/lqx/Desktop/时间序列论文/数据/关键指标.xls")
+df <- read_excel("C:/关键指标.xls")
 
-# 转换日期列（假设你的数据有日期列）
+# 转换日期列
 df$date <- ymd(df$date)
 
 # 绘制第一个时间序列图（中国最优权重）
