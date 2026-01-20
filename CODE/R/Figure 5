@@ -7,7 +7,7 @@ library(lubridate)
 # 读取数据
 df <- read_excel("C:/关键指标.xls")
 
-# 转换日期列（假设你的数据有日期列）
+# 转换日期列
 df$date <- ymd(df$date)
 
 # 绘制时间序列图
